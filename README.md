@@ -28,9 +28,18 @@ Here's where I'm keeping track of things that need to be done, as the project ma
 - [ ] Create a shell script to be run in Cloud Console that will automate this process
 
 
-## Setup
+## Local development
 
-- a service account client key (not included, please hmu for it)
-- gcloud SDK (for deploying Cloud Functions)
+Before running `npm install`, make sure you have:
+
+- a Google Cloud Platform service account client key (not included, please hmu for it)
 - node lts/gallium (^16.18.0)
+- the `gcloud` SDK (for deploying Cloud Functions)
 
+Optional:
+
+- Docker (only if you want to build locally &mdash; Google [doesn't recommend this anymore](https://cloud.google.com/functions/docs/running/overview#choosing_an_abstraction_layer))
+
+## Deployment
+
+Once you're done testing locally, you can [deploy to your GCP project](https://cloud.google.com/functions/docs/deploy) using gcloud.
