@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "functions-framework --target=gtmDownloader --signature-type=http",
-    "build": "./pack.sh"
+    "build": "./pack.sh",
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^2.1.0",
