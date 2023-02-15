@@ -2,6 +2,8 @@
 
 require('dotenv').config();
 
+const { wait } = require('./helpers/wait');
+
 const functions = require('@google-cloud/functions-framework');
 
 const {google} = require('googleapis');
