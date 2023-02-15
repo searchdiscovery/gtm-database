@@ -23,25 +23,38 @@ async function main() {
   // set argument for request (?)
   const request = { auth: authClient };
 
-  // make request using Tag Manager client
-  const res = await tagmanager.accounts.list(request);
-  console.log(res.data);
+  /**
+   * Get a list of all accounts
+   * @see https://developers.google.com/tag-platform/tag-manager/api/v2/reference
+   */
+  const accountsList = await tagmanager.accounts.list(request);
+  const accounts = accountsList.data.account || [];
 
-  return res.data;
+  /**
+   * Get a list of containers for each account
+   */
+  const containersList = accounts.reduce(async (acc, account) => {
+    await wait(4000);
+    const containers = await tagmanager.accounts.containers.list({ auth: authClient, parent: account.path });
+    acc = [...containers.data.container];
+    return acc;
+  }, [])
+
+  return containersList;
 }
 
 // do the cloud function!
-functions.http('gtmDownloader', (req, res) => {
+functions.http('gtmDownloader', async (req, res) => {
 
   try {
     // run main
-    main()
-      .then(data => { res.send(`Hello ${data.account[0].name}`) })
-      .catch(console.error);
+    const data = await main();
+    res.send(data);
 
     // write to BQ tables
+
   } catch(e) {
-    res.send(`Oops ${e.message}`);
+    res.status(500).send(`Oops ${e.message}`);
   }
   
 });
