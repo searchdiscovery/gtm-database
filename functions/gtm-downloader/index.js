@@ -5,9 +5,12 @@ require('dotenv').config();
 const { wait } = require('./helpers/wait');
 
 const functions = require('@google-cloud/functions-framework');
+const { BigQuery } = require('@google-cloud/bigquery');
 
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const tagmanager = google.tagmanager('v2');
+
+
 
 async function main() {
 
@@ -33,14 +36,23 @@ async function main() {
   /**
    * Get a list of containers for each account
    */
-  const containersList = accounts.reduce(async (acc, account) => {
+  const containersList = await accounts.reduce(async (acc, account) => {
     await wait(4000);
     const containers = await tagmanager.accounts.containers.list({ auth: authClient, parent: account.path });
     acc = [...containers.data.container];
     return acc;
-  }, [])
+  }, []);
 
-  return containersList;
+  /**
+   * Sends rows to BigQuery
+   */
+
+  const bqClient = new BigQuery();
+
+  return await bqClient
+    .dataset('test_gtm_upload')
+    .getTables();
+
 }
 
 // do the cloud function!
@@ -49,7 +61,7 @@ functions.http('gtmDownloader', async (req, res) => {
   try {
     // run main
     const data = await main();
-    res.send(data);
+    res.status(200).send(data);
 
     // write to BQ tables
 
