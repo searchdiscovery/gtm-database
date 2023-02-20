@@ -43,15 +43,23 @@ async function main() {
     return acc;
   }, []);
 
+  const query = containersList.map(c => {
+    c.features = JSON.stringify(c.features);
+    return c;
+  })
+
   /**
    * Sends rows to BigQuery
    */
 
   const bqClient = new BigQuery();
 
-  return await bqClient
+  await bqClient
     .dataset('test_gtm_upload')
-    .getTables();
+    .table('test_gtm_containers')
+    .insert(query);
+
+  return query;
 
 }
 
@@ -66,7 +74,7 @@ functions.http('gtmDownloader', async (req, res) => {
     // write to BQ tables
 
   } catch(e) {
-    res.status(500).send(`Oops ${e.message}`);
+    res.status(500).send(e);
   }
   
 });
