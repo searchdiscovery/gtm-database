@@ -1,0 +1,62 @@
+[
+  {
+    "name": "path",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "accountID",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "containerId",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "name",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "publicId",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "usageContext",
+    "mode": "REPEATED",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "fingerprint",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "tagIds",
+    "mode": "REPEATED",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "tagManagerUrl",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "features",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  }
+]

@@ -5,6 +5,7 @@
     "deploy": "./deploy.sh"
   },
   "dependencies": {
+    "@google-cloud/bigquery": "^6.1.0",
     "@google-cloud/functions-framework": "^2.1.0",
     "dotenv": "^16.0.3",
     "googleapis": "^108.0.0"
