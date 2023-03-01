@@ -11,6 +11,15 @@ const { google } = require('googleapis');
 const tagmanager = google.tagmanager('v2');
 
 
+// @see https://www.npmjs.com/package/p-ratelimit
+const { pRateLimit } = require('p-ratelimit');
+
+const limit = pRateLimit({
+  interval: 1000,
+  rate: .25
+})
+
+
 async function main() {
 
   // auth constructor
@@ -41,28 +50,39 @@ async function main() {
   /**
    * 2. Get all the containers for all the accounts.
    */
-  const promises = [];
+  const containerRequests = [];
 
   accounts.forEach(account => {
-    promises.push(
-      tagmanager.accounts.containers.list({ parent: account.path })
+    containerRequests.push(
+      limit(() => tagmanager.accounts.containers.list({ parent: account.path }))
     );
   });
   
-  const containersList = await Promise.all(promises);
+  const containersList = await Promise.all(containerRequests);
 
-  // Take the two arrays in containersList and create a new array with all of the members of each.
-  const containerMembers = [containersList]
+  const containers = containersList.flatMap(c => c.data.container);
 
-  const allContainers = containersList.flatMap(c => c.data.container);
-
-  console.log(allContainers);
+  // console.log(containers);
 
   /**
    * 3. Get an array of container live versions.
    */
 
-  // const liveContainers = 
+  const versionRequests = [];
+
+  containers.forEach(container => {
+    versionRequests.push(
+      limit(() => tagmanager.accounts.containers.versions.live({ parent: container.path }))
+    );
+  });
+  
+  const versionsList = await Promise.all(versionRequests);
+
+  console.log(versionsList);
+
+  // const versions = versionsList.flatMap(c => c.data.version.container);
+
+  // console.log(versions);
 
   /**
    * 4. For each live container version, insert the following into respective BQ tables:
@@ -72,24 +92,15 @@ async function main() {
    * - Its triggers
    */
 
-//   get a list of tags 
-  
 
-  // const tagsList = await accounts.reduce(async (acc, workspace) =>{
-  //   await wait(4000)
-  //   const tags = await tagmanager.accounts.containers.workspaces.tags.list({ parent: workspace.path})
-  //   acc = [...tags.data.tag];
-  //   return acc;
-  // }, []);
+  // BQ request to insert tags
 
-  //   get a list of variables 
-  
-  // const variablesList = await accounts.reduce(async (acc, account) =>{
-  //   await wait(4000)
-  //   const variables = await tagmanager.accounts.containers.workspaces.variables.list({ parent: workspace.path })
-  //   // console.log("variables: ", variables)
-  //   acc = [...variables.data.variable];
-  // })
+  // BQ request to insert variables
+
+  // BQ request to insert built-in variables
+
+  // BQ request to insert triggers
+
 
   // const query = containersList.map(c => {
   //   c.features = JSON.stringify(c.features);
