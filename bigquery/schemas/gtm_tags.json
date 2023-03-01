@@ -1,0 +1,108 @@
+[
+  {
+    "name": "accountId",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "containerId",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "tagId",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "name",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "type",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "parameter",
+    "mode": "REPEATED",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      },
+      {
+        "name": "key",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      },
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "fingerprint",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "firingTriggerId",
+    "mode": "REPEATED",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "tagFiringOption",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "monitoringMetadata",
+    "mode": "NULLABLE",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "consentSettings",
+    "mode": "NULLABLE",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "consentStatus",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  }
+]
