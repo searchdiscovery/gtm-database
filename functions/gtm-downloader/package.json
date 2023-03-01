@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "test" : "index.js",
     "start": "functions-framework --target=gtmDownloader --signature-type=http",
     "build": "./pack.sh",
     "deploy": "./deploy.sh"
