@@ -24,53 +24,56 @@ async function main() {
 
   google.options({
     // All requests made with this object will use these settings unless overridden.
-    auth: authClient
+    auth: authClient,
+    timeout: 4000
   });
 
   const bqClient = new BigQuery();
 
   /**
-   * Get a list of all accounts
+   * 1. Get a list of all accounts
    * @see https://developers.google.com/tag-platform/tag-manager/api/v2/reference
    */
 
   const accountsList = await tagmanager.accounts.list();
   const accounts = accountsList.data.account || [];
 
-  console.log('accounts:',accounts)
-
+  /**
+   * 2. Get all the containers for all the accounts.
+   */
   const promises = [];
 
   accounts.forEach(account => {
-    promises.push(tagmanager.accounts.containers.list({ parent: account.path }))
+    promises.push(
+      tagmanager.accounts.containers.list({ parent: account.path })
+    );
   });
   
-  console.log(promises);
-  
   const containersList = await Promise.all(promises);
-  
-  console.log(containersList.map(container => container.data.container.map(c => c.name)));
-  
+
+  // Take the two arrays in containersList and create a new array with all of the members of each.
+  const containerMembers = [containersList]
+
+  const allContainers = containersList.flatMap(c => c.data.container);
+
+  console.log(allContainers);
+
   /**
-   * Get a list of containers for each account
+   * 3. Get an array of container live versions.
    */
-  // const containersList = accounts.reduce(async (acc, account) => {
-  //   const containers = await Promise.all(
-  //     wait(4000),
-  //     tagmanager.accounts.containers.list({ parent: account.path })
-  //   );
-  //   acc = [...containers.data.container];
-  //   return acc;
-  // }, []);
+
+  // const liveContainers = 
+
+  /**
+   * 4. For each live container version, insert the following into respective BQ tables:
+   * - Its tags
+   * - Its variables
+   * - Its builtInVariables
+   * - Its triggers
+   */
 
 //   get a list of tags 
   
-  // const liveContainers = containersList.reduce(async (acc, container) => {
-  //   await wait(4000);
-  //   const liveContainers = await tagmanager.accounts.containers.versions.live({ parent: container.path });
-  //   acc = [...liveContainers.data.version];
-  //   return acc;
-  // }, []);
 
   // const tagsList = await accounts.reduce(async (acc, workspace) =>{
   //   await wait(4000)
@@ -146,3 +149,14 @@ functions.http('gtmDownloader', async (req, res) => {
   }
   
 });
+
+function serializePromises(immediate) {
+  // This works as our promise queue
+  let last = Promise.resolve();
+  return function (...a) {
+    // Catch is necessary here — otherwise a rejection in a promise will
+    // break the serializer forever
+    last = last.catch(() => {}).then(() => immediate(...a));
+    return last;
+  }
+}
