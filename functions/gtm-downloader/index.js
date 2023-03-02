@@ -78,7 +78,7 @@ async function main() {
   
   const versionsList = await Promise.all(versionRequests);
 
-  console.log(versionsList);
+  // console.log("versionsList: ", versionsList);
 
   // const versions = versionsList.flatMap(c => c.data.version.container);
 
@@ -91,50 +91,79 @@ async function main() {
    * - Its builtInVariables
    * - Its triggers
    */
+  
 
+  const tags = []
+  const variables = []
+  const builtInVariables = []
+  const triggers = []
 
-  // BQ request to insert tags
+  versionsList.forEach(version =>{
+    tags.push(version.data.tag) // array
+    variables.push(version.data.variable) // array
+    builtInVariables.push(version.data.builtInVariable) // array 
+    triggers.push(version.data.trigger) // array
+  })
+  
+  console.log('tags:', tags)
 
-  // BQ request to insert variables
+  const tagRecords = tags.filter(tag => tag).flat(2).map(tag =>{
+    const { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId = [], blockingTriggerId = [], tagFiringOption, monitoringMetadata } = tag;
+    parameter = parameter.map(p => { return { key = null, value = null, type, list = [], map = []} = p });
+    const newTag = { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId, blockingTriggerId, tagFiringOption, monitoringMetadata };
+    return newTag;
+  })
 
-  // BQ request to insert built-in variables
+  console.log('tagRecords:', tagRecords.map(t => t.name));
 
-  // BQ request to insert triggers
+  // const tagRecords = JSON.stringify(tag.flat(Infinity))
+  // const tagRecords =  tag.flat(Infinity)
+  const variableRecords = variables.flat(Infinity)
+  const builtInVariableRecords = builtInVariables.flat(Infinity)
+  const triggerRecords = triggers.flat(Infinity)
 
-
-  // const query = containersList.map(c => {
-  //   c.features = JSON.stringify(c.features);
-  //   return c;
+  // variableRecords.forEach(record =>{
+  //   console.log(record)
   // })
+  // console.log( "tagQuery: ", typeof tagQuery[0])
+  // console.log("tagQuery: ", typeof tagQuery)
+  // console.log("tagQuery: ", typeof tagQuery[0])
 
-  // const tagsQuery = tagsList.map(c => {
-  //   c.features = JSON.stringify(c.features);
-  //   return c;
-  // })
-
-  // const variablesQuery = variablesList.map(c => {
-  //   c.features = JSON.stringify(c.features);
-  //   return c;
-  // })
 
   /**
    * Sends rows to BigQuery
    */
 
+  // BQ request to insert containers
   // await bqClient
   //   .dataset('test_gtm_upload')
   //   .table('test_gtm_containers')
   //   .insert(query);
 
-  // await bqClient
-  // .dataset('test_gtm_upload')
-  // .table('test_gtm_tags')
-  // .insert(tagsQuery);
+  // BQ request to insert tags
+  await bqClient
+    .dataset('test_gtm_upload')
+    .table('test_gtm_tags')
+    .insert(tagRecords);
 
+  // BQ request to insert variables
   // await bqClient
   // .dataset('test_gtm_upload')
   // .table('test_gtm_variables')
-  // .insert(variablesQuery);
+  // .insert(variableRecords);
+
+  // BQ request to insert built-in variables
+
+  // await bqClient
+  // .dataset('test_gtm_upload')
+  // .table('test_gtm_builtInVariables')
+  // .insert(builtInVariableRecords);
+
+  // BQ request to insert triggers
+  // await bqClient
+  // .dataset('test_gtm_upload')
+  // .table('test_gtm_triggers')
+  // .insert(triggerRecords);
   
   // return query;
   // return tagsQuery;
@@ -160,14 +189,3 @@ functions.http('gtmDownloader', async (req, res) => {
   }
   
 });
-
-function serializePromises(immediate) {
-  // This works as our promise queue
-  let last = Promise.resolve();
-  return function (...a) {
-    // Catch is necessary here — otherwise a rejection in a promise will
-    // break the serializer forever
-    last = last.catch(() => {}).then(() => immediate(...a));
-    return last;
-  }
-}
