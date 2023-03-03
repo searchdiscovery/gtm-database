@@ -46,23 +46,23 @@ async function main() {
    * @see https://developers.google.com/tag-platform/tag-manager/api/v2/reference
    */
 
-  // const accountsList = await tagmanager.accounts.list();
-  // const accounts = accountsList.data.account || [];
+  const accountsList = await tagmanager.accounts.list();
+  const accounts = accountsList.data.account || [];
 
   /**
    * 2. Get all the containers for all the accounts.
    */
-  // const containerRequests = [];
+  const containerRequests = [];
 
-  // accounts.forEach(account => {
-  //   containerRequests.push(
-  //     limit(() => tagmanager.accounts.containers.list({ parent: account.path }))
-  //   );
-  // });
+  accounts.forEach(account => {
+    containerRequests.push(
+      limit(() => tagmanager.accounts.containers.list({ parent: account.path }))
+    );
+  });
   
-  // const containersList = await Promise.all(containerRequests);
+  const containersList = await Promise.all(containerRequests);
 
-  // const containers = containersList.flatMap(c => c.data.container);
+  const containers = containersList.flatMap(c => c.data.container);
 
   // console.log(containers);
 
@@ -70,15 +70,15 @@ async function main() {
    * 3. Get an array of container live versions.
    */
 
-  // const versionRequests = [];
+  const versionRequests = [];
 
-  // containers.forEach(container => {
-  //   versionRequests.push(
-  //     limit(() => tagmanager.accounts.containers.versions.live({ parent: container.path }))
-  //   );
-  // });
+  containers.forEach(container => {
+    versionRequests.push(
+      limit(() => tagmanager.accounts.containers.versions.live({ parent: container.path }))
+    );
+  });
   
-  // const versionsList = await Promise.all(versionRequests);
+  const versionsList = await Promise.all(versionRequests);
 
   // console.log("versionsList: ", versionsList);
 
@@ -95,16 +95,16 @@ async function main() {
    */
   
   // let tags = [];
-  // const variables = []
-  // const builtInVariables = []
-  // const triggers = []
+  let variables = []
+  const builtInVariables = []
+  const triggers = []
 
-  // versionsList.forEach(version =>{
-  //   tags.push(version.data.tag) // array
-  //   variables.push(version.data.variable) // array
-  //   builtInVariables.push(version.data.builtInVariable) // array 
-  //   triggers.push(version.data.trigger) // array
-  // })
+  versionsList.forEach(version =>{
+    // tags.push(version.data.tag) // array
+    variables.push(version.data.variable) // array
+    // builtInVariables.push(version.data.builtInVariable) // array 
+    // triggers.push(version.data.trigger) // array
+  })
 
   // mocking data so we don't have to wait for API requests to complete
   let tags = require('./data/tags.json');
@@ -117,7 +117,6 @@ async function main() {
     let { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId = [], blockingTriggerId = [], tagFiringOption, monitoringMetadata } = tag;
     // console.log('parameter before:',parameter)
     parameter = parameter.map(p => {
-        // this is some fucked up shit right here
         // return an object that has some value for all properties, not just key/value/type
         let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
         return { type, key: _key, value, list, map };
@@ -128,7 +127,27 @@ async function main() {
     return tag;
   });
 
-  console.log('tagRecords:', tagRecords.map(t => t.name));
+  // console.log('tagRecords:', tagRecords.map(t => t.name));
+
+  // console.log("raw variables ", variables)
+
+  variables = variables.filter(variable => variable)
+
+  // console.log("variable after filter: ", variables)
+
+  const variableRecords = variables.flat(2).map(variable =>{
+    let {accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId, formatValue = {}} = variable
+    parameter = parameter.map(p =>{
+      // return an object that has some value for all properties, not just key/value/type
+      let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
+      return { type, key: _key, value, list, map };
+    })
+    // console.log('parameter after:',parameter);
+    variable = {accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId, formatValue}
+    return variable;
+  })
+
+  console.log("variableRecords: ", variableRecords)
 
   // const variableRecords = variables.flat(Infinity)
   // const builtInVariableRecords = builtInVariables.flat(Infinity)
@@ -153,10 +172,10 @@ async function main() {
   //   .insert(query);
 
   // BQ request to insert tags
-  await bqClient
-    .dataset('test_gtm_upload')
-    .table('test_gtm_tags')
-    .insert(tagRecords);
+  // await bqClient
+  //   .dataset('test_gtm_upload')
+  //   .table('test_gtm_tags')
+  //   .insert(tagRecords);
 
   // BQ request to insert variables
   // await bqClient
