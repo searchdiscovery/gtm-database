@@ -1,0 +1,215 @@
+[
+  {
+    "name": "accountId",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "containerId",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "triggerId",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "name",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "type",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "filter",
+    "mode": "REPEATED",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "parameter",
+        "mode": "REPEATED",
+        "type": "RECORD",
+        "fields": [
+          {
+            "name": "value",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          },
+          {
+            "name": "key",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          },
+          {
+            "name": "type",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "customEventFilter",
+    "mode": "REPEATED",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "parameter",
+        "mode": "REPEATED",
+        "type": "RECORD",
+        "fields": [
+          {
+            "name": "value",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          },
+          {
+            "name": "key",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          },
+          {
+            "name": "type",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "waitForTags",
+    "mode": "NULLABLE",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "fields": []
+      },
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "checkValidation",
+    "mode": "NULLABLE",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "fields": []
+      },
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "waitForTagsTimeout",
+    "mode": "NULLABLE",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "INTEGER",
+        "fields": []
+      },
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "uniqueTriggerId",
+    "mode": "NULLABLE",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "fingerprint",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "parentFolderId",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "parameter",
+    "mode": "REPEATED",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      },
+      {
+        "name": "key",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      },
+      {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      }
+    ]
+  }
+]
