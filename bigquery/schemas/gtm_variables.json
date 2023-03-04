@@ -30,24 +30,18 @@
     "fields": []
   },
   {
-    "name": "notes",
-    "mode": "NULLABLE",
-    "type": "STRING",
-    "fields": []
-  },
-  {
     "name": "parameter",
     "mode": "REPEATED",
     "type": "RECORD",
     "fields": [
       {
-        "name": "key",
+        "name": "type",
         "mode": "NULLABLE",
         "type": "STRING",
         "fields": []
       },
       {
-        "name": "type",
+        "name": "key",
         "mode": "NULLABLE",
         "type": "STRING",
         "fields": []
@@ -64,18 +58,24 @@
         "type": "RECORD",
         "fields": [
           {
+            "name": "type",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          },
+          {
             "name": "map",
             "mode": "REPEATED",
             "type": "RECORD",
             "fields": [
               {
-                "name": "key",
+                "name": "type",
                 "mode": "NULLABLE",
                 "type": "STRING",
                 "fields": []
               },
               {
-                "name": "type",
+                "name": "key",
                 "mode": "NULLABLE",
                 "type": "STRING",
                 "fields": []
@@ -87,12 +87,6 @@
                 "fields": []
               }
             ]
-          },
-          {
-            "name": "type",
-            "mode": "NULLABLE",
-            "type": "STRING",
-            "fields": []
           }
         ]
       },
@@ -102,13 +96,13 @@
         "type": "RECORD",
         "fields": [
           {
-            "name": "key",
+            "name": "type",
             "mode": "NULLABLE",
             "type": "STRING",
             "fields": []
           },
           {
-            "name": "type",
+            "name": "key",
             "mode": "NULLABLE",
             "type": "STRING",
             "fields": []

@@ -17,8 +17,6 @@ const limit = pRateLimit({
   rate: .25
 });
 
-const { asyncPipe } = require('./helpers/pipe');
-
 
 async function main() {
 
@@ -44,13 +42,19 @@ async function main() {
 
 
   /**
-   * Start with getting all the live versions each container
+   * 1. Get all accounts
    */
-  const versions = MOCK_DATA ? require('./data/versions.json') : await asyncPipe(
-    getAccounts,
-    getContainers,
-    getVersions
-  )();
+  const accounts = getAccounts();
+
+  /**
+   * 2. Get all containers
+   */
+  const containers = getContainers(accounts);
+
+  /**
+   * 3. Get the live versions of each container
+   */
+  const versions = MOCK_DATA ? require('./data/versions.json') : getVersions(containers);
 
   /**
    * 4. For each live container version, insert the following into respective BQ tables:
@@ -68,45 +72,105 @@ async function main() {
 
   //TODO: explain what's happening here
   const tagRecords = tags.flatMap(tag => {
-    let { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId = [], blockingTriggerId = [], tagFiringOption, monitoringMetadata } = tag;
+    let {
+      accountId,
+      containerId,
+      tagId,
+      name,
+      type,
+      parameter,
+      fingerprint,
+      firingTriggerId = [],
+      blockingTriggerId = [],
+      tagFiringOption,
+      monitoringMetadata
+    } = tag;
+
     parameter = parameter.map(p => {
-        // return an object that has some value for all properties, not just key/value/type
-        let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
-        return { type, key: _key, value, list, map };
-      });
+      // return an object that has some value for all properties, not just key/value/type
+      let {
+        type,
+        "key":_key = null,
+        value = null,
+        list = [],
+        map = []
+      } = { ...p };
+
+      return { type, key: _key, value, list, map };
+    });
+    
     return { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId, blockingTriggerId, tagFiringOption, monitoringMetadata };
   });
 
   const variableRecords = variables.flatMap(variable => {
-    let { accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId = null } = variable;
-    if (parameter) parameter = parameter.map(p => {
-      // return an object that has some value for all properties, not just key/value/type
-      let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
-      return { type, key: _key, value, list, map };
-    });
+
+    let {
+      accountId,
+      containerId,
+      variableId,
+      name,
+      type,
+      parameter,
+      fingerprint,
+      parentFolderId = null
+    } = variable;
+
+    if (parameter) {
+      parameter = parameter.map(p => {
+        // return an object that has some value for all properties, not just key/value/type
+        let {
+          type,
+          "key":_key = null,
+          value = null,
+          list = [],
+          map = []
+        } = { ...p };
+        return { type, key: _key, value, list, map };
+      });
+    } else {
+      parameter = [
+        {
+          type: null,
+          key: null,
+          value: null,
+          list: [],
+          map: []
+        }
+      ];
+    }
     
-    return { accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId }
+    return {
+      accountId,
+      containerId,
+      variableId,
+      name,
+      type,
+      parameter,
+      fingerprint,
+      parentFolderId
+    };
+
   });
 
   const builtInVariableRecords = builtInVariables;
 
   const triggerRecords = triggers.flatMap(trigger => {
     let {
-        accountId,
-        containerId,
-        triggerId,
-        name,
-        type,
-        filter = null,
-        customEventFilter = null,
-        waitForTags = null,
-        checkValidation = null,
-        waitForTagsTimeout = null,
-        uniqueTriggerId = null,
-        fingerprint = null,
-        parentFolderId = null,
-        parameter = null
-      } = trigger;
+      accountId,
+      containerId,
+      triggerId,
+      name,
+      type,
+      filter = null,
+      customEventFilter = null,
+      waitForTags = null,
+      checkValidation = null,
+      waitForTagsTimeout = null,
+      uniqueTriggerId = null,
+      fingerprint = null,
+      parentFolderId = null,
+      parameter = null
+    } = trigger;
 
     if (parameter) {
       parameter = parameter.map(p => {
@@ -180,10 +244,10 @@ async function main() {
    */
 
   // Insert account rows
-  await dataset.table('test_gtm_accounts').insert(accountRecords);
+  // await dataset.table('test_gtm_accounts').insert(accountRecords);
 
   // Insert container rows
-  await dataset.table('test_gtm_containers').insert(containerRecords);
+  // await dataset.table('test_gtm_containers').insert(containerRecords);
 
   // Insert tag rows
   await dataset.table('test_gtm_tags').insert(tagRecords);
