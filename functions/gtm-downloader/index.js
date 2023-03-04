@@ -2,12 +2,8 @@
 
 require('dotenv').config();
 
-const { wait } = require('./helpers/wait');
-
 const functions = require('@google-cloud/functions-framework');
 const { BigQuery } = require('@google-cloud/bigquery');
-
-const fs = require('fs');
 
 const { google } = require('googleapis');
 const tagmanager = google.tagmanager('v2');
