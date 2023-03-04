@@ -24,6 +24,8 @@ const limit = pRateLimit({
 
 async function main() {
 
+  const MOCK_DATA = true; // change to false to use live API calls
+
   // auth constructor
   const auth = new google.auth.GoogleAuth({
     scopes: ['https://www.googleapis.com/auth/tagmanager.readonly'],
@@ -40,51 +42,24 @@ async function main() {
   });
 
   const bqClient = new BigQuery();
+  const dataset = bqClient.dataset('test_gtm_upload');
 
   /**
    * 1. Get a list of all accounts
    * @see https://developers.google.com/tag-platform/tag-manager/api/v2/reference
    */
-
-  const accountsList = await tagmanager.accounts.list();
-  const accounts = accountsList.data.account || [];
+  const accounts = MOCK_DATA ? [] : await getAccounts();
 
   /**
    * 2. Get all the containers for all the accounts.
    */
-  const containerRequests = [];
-
-  accounts.forEach(account => {
-    containerRequests.push(
-      limit(() => tagmanager.accounts.containers.list({ parent: account.path }))
-    );
-  });
-  
-  const containersList = await Promise.all(containerRequests);
-
-  const containers = containersList.flatMap(c => c.data.container);
-
+  const containers = MOCK_DATA ? [] : await getContainers(accounts);
   // console.log(containers);
 
   /**
    * 3. Get an array of container live versions.
    */
-
-  const versionRequests = [];
-
-  containers.forEach(container => {
-    versionRequests.push(
-      limit(() => tagmanager.accounts.containers.versions.live({ parent: container.path }))
-    );
-  });
-  
-  const versionsList = await Promise.all(versionRequests);
-
-  // console.log("versionsList: ", versionsList);
-
-  // const versions = versionsList.flatMap(c => c.data.version.container);
-
-  // console.log(versions);
+  const versions = MOCK_DATA ? require('./data/versions.json') : await getVersions(containers);
 
   /**
    * 4. For each live container version, insert the following into respective BQ tables:
@@ -94,97 +69,81 @@ async function main() {
    * - Its triggers
    */
   
-  // let tags = [];
-  let variables = []
-  const builtInVariables = []
-  const triggers = []
+  const tags = versions.map(version => version.tag).filter(o => o).flat();
+  const variables = versions.map(version => version.variable).filter(o => o).flat();
+  const builtInVariables = versions.map(version => version.builtInVariable).filter(o => o).flat(2);
+  const triggers = versions.map(version => version.trigger).filter(o => o).flat();
 
-  versionsList.forEach(version =>{
-    // tags.push(version.data.tag) // array
-    variables.push(version.data.variable) // array
-    // builtInVariables.push(version.data.builtInVariable) // array 
-    // triggers.push(version.data.trigger) // array
-  })
 
-  // mocking data so we don't have to wait for API requests to complete
-  let tags = require('./data/tags.json');
-
-  // Filter out undefined
-  tags = tags.filter(tag => tag);
-
-  // Flatten the array and do some prep
-  const tagRecords = tags.flat(2).map(tag => {
+  //TODO: explain what's happening here
+  const tagRecords = tags.flatMap(tag => {
     let { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId = [], blockingTriggerId = [], tagFiringOption, monitoringMetadata } = tag;
-    // console.log('parameter before:',parameter)
     parameter = parameter.map(p => {
         // return an object that has some value for all properties, not just key/value/type
         let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
         return { type, key: _key, value, list, map };
       });
-    // console.log('parameter after:',parameter);
-    tag = { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId, blockingTriggerId, tagFiringOption, monitoringMetadata };
-    // console.log('prepped tag:',tag);
-    return tag;
+    return { accountId, containerId, tagId, name, type, parameter, fingerprint, firingTriggerId, blockingTriggerId, tagFiringOption, monitoringMetadata };
   });
 
-  // console.log('tagRecords:', tagRecords.map(t => t.name));
-
-  // console.log("raw variables ", variables)
-
-  variables = variables.filter(variable => variable)
-
-  // console.log("variable after filter: ", variables)
-
-  const variableRecords = variables.flat(2).map(variable =>{
-    let {accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId, formatValue = {}} = variable
-    parameter = parameter.map(p =>{
+  const variableRecords = variables.flatMap(variable => {
+    let { accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId = null } = variable;
+    if (parameter) parameter = parameter.map(p => {
       // return an object that has some value for all properties, not just key/value/type
       let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
       return { type, key: _key, value, list, map };
-    })
-    // console.log('parameter after:',parameter);
-    variable = {accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId, formatValue}
-    return variable;
-  })
+    });
+    
+    return { accountId, containerId, variableId, name, type, parameter, fingerprint, parentFolderId }
+  });
 
-  console.log("variableRecords: ", variableRecords)
+  const builtInVariableRecords = builtInVariables;
 
-  // const variableRecords = variables.flat(Infinity)
-  // const builtInVariableRecords = builtInVariables.flat(Infinity)
-  // const triggerRecords = triggers.flat(Infinity)
+  const triggerRecords = triggers.flatMap(trigger => {
+    let {
+        accountId,
+        containerId,
+        triggerId,
+        name,
+        type,
+        filter = null,
+        customEventFilter = null,
+        waitForTags = null,
+        checkValidation = null,
+        waitForTagsTimeout = null,
+        uniqueTriggerId = null,
+        fingerprint = null,
+        parentFolderId = null,
+        formatValue = null,
+        parameter = null
+      } = trigger;
 
-  // variableRecords.forEach(record =>{
-  //   console.log(record)
-  // })
-  // console.log( "tagQuery: ", typeof tagQuery[0])
-  // console.log("tagQuery: ", typeof tagQuery)
-  // console.log("tagQuery: ", typeof tagQuery[0])
-
+    if (parameter) parameter = parameter.map(p => {
+      // return an object that has some value for all properties, not just key/value/type
+      let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
+      return { type, key: _key, value, list, map };
+    });
+    
+    return { accountId, containerId, triggerId, name, type, filter, customEventFilter, waitForTags, checkValidation, waitForTagsTimeout, uniqueTriggerId, fingerprint, parentFolderId, formatValue, parameter }
+  });
 
   /**
    * Sends rows to BigQuery
    */
 
-  // BQ request to insert containers
-  // await bqClient
-  //   .dataset('test_gtm_upload')
-  //   .table('test_gtm_containers')
-  //   .insert(query);
+  // Insert account rows
+  // await dataset.table('test_gtm_accounts').insert(accountRecords);
 
-  // BQ request to insert tags
-  // await bqClient
-  //   .dataset('test_gtm_upload')
-  //   .table('test_gtm_tags')
-  //   .insert(tagRecords);
+  // Insert container rows
+  // await dataset.table('test_gtm_containers').insert(containerRecords);
 
-  // BQ request to insert variables
-  // await bqClient
-  // .dataset('test_gtm_upload')
-  // .table('test_gtm_variables')
-  // .insert(variableRecords);
+  // Insert tag rows
+  // await dataset.table('test_gtm_tags').insert(tagRecords);
+
+  // Insert variable rows
+  await dataset.table('test_gtm_variables').insert(variableRecords);
 
   // BQ request to insert built-in variables
-
   // await bqClient
   // .dataset('test_gtm_upload')
   // .table('test_gtm_builtInVariables')
@@ -196,9 +155,7 @@ async function main() {
   // .table('test_gtm_triggers')
   // .insert(triggerRecords);
   
-  // return query;
-  // return tagsQuery;
-  // return liveContainers;
+  return `${variableRecords.length} rows successfully inserted.`
 
 }
 
@@ -211,12 +168,49 @@ functions.http('gtmDownloader', async (req, res) => {
 
     res.status(200).send(data);
 
-    // write to BQ tables
-
-
   } catch(e) {
     console.error('Something went wrong:',e);
     res.status(500).send(e);
   }
   
 });
+
+const getAccounts = async () => {
+
+  const accountsList = await tagmanager.accounts.list();
+  return accountsList.data.account;
+
+}
+
+const getContainers = async (accounts) => {
+
+  const containerRequests = [];
+
+  accounts.forEach(account => {
+    containerRequests.push(
+      limit(() => tagmanager.accounts.containers.list({ parent: account.path }))
+    );
+  });
+  
+  const containersList = await Promise.all(containerRequests);
+
+  return containersList.flatMap(c => c.data.container);
+}
+
+const getVersions = async (containers) => {
+
+  const versionRequests = [];
+
+  containers.forEach(container => {
+    versionRequests.push(
+      limit(() => tagmanager.accounts.containers.versions.live({ parent: container.path }))
+    );
+  });
+  
+  const versionsList = await Promise.all(versionRequests);
+
+  console.log("versionsList: ", versionsList);
+
+  return versionsList.flatMap(c => c.data); // <== USE THIS
+  
+}
