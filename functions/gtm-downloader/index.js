@@ -15,7 +15,9 @@ const { pRateLimit } = require('p-ratelimit');
 const limit = pRateLimit({
   interval: 1000,
   rate: .25
-})
+});
+
+const { asyncPipe } = require('./helpers/pipe');
 
 
 async function main() {
@@ -40,22 +42,15 @@ async function main() {
   const bqClient = new BigQuery();
   const dataset = bqClient.dataset('test_gtm_upload');
 
-  /**
-   * 1. Get a list of all accounts
-   * @see https://developers.google.com/tag-platform/tag-manager/api/v2/reference
-   */
-  const accounts = MOCK_DATA ? [] : await getAccounts();
 
   /**
-   * 2. Get all the containers for all the accounts.
+   * Start with getting all the live versions each container
    */
-  const containers = MOCK_DATA ? [] : await getContainers(accounts);
-  // console.log(containers);
-
-  /**
-   * 3. Get an array of container live versions.
-   */
-  const versions = MOCK_DATA ? require('./data/versions.json') : await getVersions(containers);
+  const versions = MOCK_DATA ? require('./data/versions.json') : await asyncPipe(
+    getAccounts,
+    getContainers,
+    getVersions
+  )();
 
   /**
    * 4. For each live container version, insert the following into respective BQ tables:
@@ -185,24 +180,24 @@ async function main() {
    */
 
   // Insert account rows
-  // await dataset.table('test_gtm_accounts').insert(accountRecords);
+  await dataset.table('test_gtm_accounts').insert(accountRecords);
 
   // Insert container rows
-  // await dataset.table('test_gtm_containers').insert(containerRecords);
+  await dataset.table('test_gtm_containers').insert(containerRecords);
 
   // Insert tag rows
-  // await dataset.table('test_gtm_tags').insert(tagRecords);
+  await dataset.table('test_gtm_tags').insert(tagRecords);
 
   // Insert variable rows
-  // await dataset.table('test_gtm_variables').insert(variableRecords);
+  await dataset.table('test_gtm_variables').insert(variableRecords);
 
   // BQ request to insert built-in variables
-  // await dataset.table('test_gtm_built_in_variables').insert(builtInVariableRecords);
+  await dataset.table('test_gtm_built_in_variables').insert(builtInVariableRecords);
 
   // BQ request to insert triggers
   await dataset.table('test_gtm_triggers').insert(triggerRecords);
   
-  return `${triggerRecords.length} rows successfully inserted.`
+  return `Tag manager db go brrrrr`;
 
 }
 
