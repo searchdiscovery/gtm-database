@@ -1,3 +1,5 @@
 node_modules
 jwt.keys.json
 deploy.sh
+data/
+test.js
