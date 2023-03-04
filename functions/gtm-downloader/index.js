@@ -141,21 +141,15 @@ async function main() {
   // await dataset.table('test_gtm_tags').insert(tagRecords);
 
   // Insert variable rows
-  await dataset.table('test_gtm_variables').insert(variableRecords);
+  // await dataset.table('test_gtm_variables').insert(variableRecords);
 
   // BQ request to insert built-in variables
-  // await bqClient
-  // .dataset('test_gtm_upload')
-  // .table('test_gtm_builtInVariables')
-  // .insert(builtInVariableRecords);
+  // await dataset.table('test_gtm_built_in_variables').insert(builtInVariableRecords);
 
   // BQ request to insert triggers
-  // await bqClient
-  // .dataset('test_gtm_upload')
-  // .table('test_gtm_triggers')
-  // .insert(triggerRecords);
+  await dataset.table('test_gtm_triggers').insert(triggerRecords);
   
-  return `${variableRecords.length} rows successfully inserted.`
+  return `${triggerRecords.length} rows successfully inserted.`
 
 }
 

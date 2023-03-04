@@ -1,0 +1,27 @@
+[
+
+  {
+    "name": "accountId",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "containerId",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "name",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "type",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  }
+]
