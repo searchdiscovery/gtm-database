@@ -110,17 +110,74 @@ async function main() {
         uniqueTriggerId = null,
         fingerprint = null,
         parentFolderId = null,
-        formatValue = null,
         parameter = null
       } = trigger;
 
-    if (parameter) parameter = parameter.map(p => {
-      // return an object that has some value for all properties, not just key/value/type
-      let { type, "key":_key = null, value = null, list = [], map = [] } = { ...p };
-      return { type, key: _key, value, list, map };
-    });
+    if (parameter) {
+      parameter = parameter.map(p => {
+        // return an object that has some value for all properties, not just key/value/type
+        let { type, "key":_key = null, value = null } = { ...p };
+        return { type, key: _key, value };
+      });
+    } else {
+      parameter = [
+        {
+          type: null,
+          key: null,
+          value: null
+        }
+      ];
+    }
+
+    if (filter) {
+      filter = filter.map(c => {
+        let { type, parameter } = c;
+        parameter = parameter.map(p => {
+          // return an object that has some value for all properties, not just key/value/type
+          let { type, "key":_key = null, value = null } = { ...p };
+          return { type, key: _key, value };
+        });
+        return { type, parameter };
+      });
+    } else {
+      filter = [
+        {
+          type: null,
+          parameter: [
+            {
+              type: null,
+              key: null,
+              value: null
+            }
+          ]
+        }
+      ];
+    }
+
+    if (customEventFilter) {
+      customEventFilter = customEventFilter.map(c => {
+        let { type, parameter } = c;
+        parameter = parameter.map(p => {
+          // return an object that has some value for all properties, not just key/value/type
+          let { type, "key":_key = null, value = null } = { ...p };
+          return { type, key: _key, value };
+        });
+        return { type, parameter };
+      });
+    } else {
+      customEventFilter = [{
+        type: null,
+        parameter: [
+          {
+            type: null,
+            key: null,
+            value: null
+          }
+        ]
+      }];
+    }
     
-    return { accountId, containerId, triggerId, name, type, filter, customEventFilter, waitForTags, checkValidation, waitForTagsTimeout, uniqueTriggerId, fingerprint, parentFolderId, formatValue, parameter }
+    return { accountId, containerId, triggerId, name, type, filter, customEventFilter, waitForTags, checkValidation, waitForTagsTimeout, uniqueTriggerId, fingerprint, parentFolderId, parameter }
   });
 
   /**

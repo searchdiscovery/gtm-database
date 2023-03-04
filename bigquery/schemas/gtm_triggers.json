@@ -35,12 +35,18 @@
     "type": "RECORD",
     "fields": [
       {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      },
+      {
         "name": "parameter",
         "mode": "REPEATED",
         "type": "RECORD",
         "fields": [
           {
-            "name": "value",
+            "name": "type",
             "mode": "NULLABLE",
             "type": "STRING",
             "fields": []
@@ -52,18 +58,12 @@
             "fields": []
           },
           {
-            "name": "type",
+            "name": "value",
             "mode": "NULLABLE",
             "type": "STRING",
             "fields": []
           }
         ]
-      },
-      {
-        "name": "type",
-        "mode": "NULLABLE",
-        "type": "STRING",
-        "fields": []
       }
     ]
   },
@@ -73,12 +73,18 @@
     "type": "RECORD",
     "fields": [
       {
+        "name": "type",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "fields": []
+      },
+      {
         "name": "parameter",
         "mode": "REPEATED",
         "type": "RECORD",
         "fields": [
           {
-            "name": "value",
+            "name": "type",
             "mode": "NULLABLE",
             "type": "STRING",
             "fields": []
@@ -90,18 +96,12 @@
             "fields": []
           },
           {
-            "name": "type",
+            "name": "value",
             "mode": "NULLABLE",
             "type": "STRING",
             "fields": []
           }
         ]
-      },
-      {
-        "name": "type",
-        "mode": "NULLABLE",
-        "type": "STRING",
-        "fields": []
       }
     ]
   },
@@ -111,15 +111,15 @@
     "type": "RECORD",
     "fields": [
       {
-        "name": "value",
-        "mode": "NULLABLE",
-        "type": "BOOLEAN",
-        "fields": []
-      },
-      {
         "name": "type",
         "mode": "NULLABLE",
         "type": "STRING",
+        "fields": []
+      },
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
         "fields": []
       }
     ]
@@ -130,15 +130,15 @@
     "type": "RECORD",
     "fields": [
       {
-        "name": "value",
-        "mode": "NULLABLE",
-        "type": "BOOLEAN",
-        "fields": []
-      },
-      {
         "name": "type",
         "mode": "NULLABLE",
         "type": "STRING",
+        "fields": []
+      },
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
         "fields": []
       }
     ]
@@ -149,15 +149,15 @@
     "type": "RECORD",
     "fields": [
       {
-        "name": "value",
-        "mode": "NULLABLE",
-        "type": "INTEGER",
-        "fields": []
-      },
-      {
         "name": "type",
         "mode": "NULLABLE",
         "type": "STRING",
+        "fields": []
+      },
+      {
+        "name": "value",
+        "mode": "NULLABLE",
+        "type": "INTEGER",
         "fields": []
       }
     ]
@@ -193,7 +193,7 @@
     "type": "RECORD",
     "fields": [
       {
-        "name": "value",
+        "name": "type",
         "mode": "NULLABLE",
         "type": "STRING",
         "fields": []
@@ -205,7 +205,7 @@
         "fields": []
       },
       {
-        "name": "type",
+        "name": "value",
         "mode": "NULLABLE",
         "type": "STRING",
         "fields": []
