@@ -32,25 +32,22 @@ async function main() {
   });
 
   const bqClient = new BigQuery();
-  const dataset = await bqClient.createDataset('gtm_database', {
-    location: 'US'
-  });
-
+  const dataset = await bqClient.dataset('test_gtm_upload');
 
   /**
    * 1. Get all accounts
    */
-  const accounts = getAccounts();
+  const accounts = await getAccounts();
 
   /**
    * 2. Get all containers
    */
-  const containers = getContainers(accounts);
+  const containers = await getContainers(accounts);
 
   /**
    * 3. Get the live versions of each container
    */
-  const versions = MOCK_DATA ? require('./data/versions.json') : getVersions(containers);
+  const versions = MOCK_DATA ? require('./data/versions.json') : await getVersions(containers);
 
   /**
    * 4. For each live container version, get each of the following:
