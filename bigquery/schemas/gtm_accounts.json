@@ -18,26 +18,8 @@
     "fields": []
   },
   {
-    "name": "shareData",
-    "mode": "NULLABLE",
-    "type": "BOOLEAN",
-    "fields": []
-  },
-  {
-    "name": "fingerprint",
-    "mode": "NULLABLE",
-    "type": "INTEGER",
-    "fields": []
-  },
-  {
-    "name": "tagManagerUrl",
-    "mode": "NULLABLE",
-    "type": "STRING",
-    "fields": []
-  },
-  {
     "name": "features",
-    "mode": "REPEATED",
+    "mode": "NULLABLE",
     "type": "RECORD",
     "fields": [
       {

@@ -3,60 +3,169 @@
     "name": "path",
     "mode": "NULLABLE",
     "type": "STRING",
+    "description": null,
     "fields": []
   },
   {
-    "name": "accountID",
+    "name": "accountId",
     "mode": "NULLABLE",
     "type": "INTEGER",
+    "description": null,
     "fields": []
   },
   {
     "name": "containerId",
     "mode": "NULLABLE",
     "type": "INTEGER",
+    "description": null,
     "fields": []
   },
   {
     "name": "name",
     "mode": "NULLABLE",
     "type": "STRING",
+    "description": null,
     "fields": []
   },
   {
     "name": "publicId",
     "mode": "NULLABLE",
     "type": "STRING",
+    "description": null,
     "fields": []
   },
   {
     "name": "usageContext",
     "mode": "REPEATED",
     "type": "STRING",
-    "fields": []
-  },
-  {
-    "name": "fingerprint",
-    "mode": "NULLABLE",
-    "type": "INTEGER",
+    "description": null,
     "fields": []
   },
   {
     "name": "tagIds",
     "mode": "REPEATED",
     "type": "STRING",
-    "fields": []
-  },
-  {
-    "name": "tagManagerUrl",
-    "mode": "NULLABLE",
-    "type": "STRING",
+    "description": null,
     "fields": []
   },
   {
     "name": "features",
     "mode": "NULLABLE",
+    "type": "RECORD",
+    "description": null,
+    "fields": [
+      {
+        "name": "supportZones",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportGtagConfigs",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportFolders",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportClients",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportBuiltInVariables",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportTemplates",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportWorkspaces",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportEnvironments",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportVariables",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportVersions",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportTriggers",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportTags",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      },
+      {
+        "name": "supportUserPermissions",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": null,
+        "fields": []
+      }
+    ]
+  },
+  {
+    "name": "tagManagerUrl",
+    "mode": "NULLABLE",
     "type": "STRING",
+    "description": null,
+    "fields": []
+  },
+  {
+    "name": "taggingServerUrls",
+    "mode": "REPEATED",
+    "type": "STRING",
+    "description": null,
+    "fields": []
+  },
+  {
+    "name": "fingerprint",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "description": null,
     "fields": []
   }
 ]
