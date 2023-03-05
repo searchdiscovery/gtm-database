@@ -1,0 +1,57 @@
+[
+  {
+    "name": "path",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "accountID",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "name",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "shareData",
+    "mode": "NULLABLE",
+    "type": "BOOLEAN",
+    "fields": []
+  },
+  {
+    "name": "fingerprint",
+    "mode": "NULLABLE",
+    "type": "INTEGER",
+    "fields": []
+  },
+  {
+    "name": "tagManagerUrl",
+    "mode": "NULLABLE",
+    "type": "STRING",
+    "fields": []
+  },
+  {
+    "name": "features",
+    "mode": "REPEATED",
+    "type": "RECORD",
+    "fields": [
+      {
+        "name": "supportuserPermissions",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "fields": []
+      },
+      {
+        "name": "supportMultipleContainers",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "fields": []
+      }
+    ]
+  }
+]
