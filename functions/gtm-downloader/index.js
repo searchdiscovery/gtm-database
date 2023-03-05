@@ -8,6 +8,7 @@ const { BigQuery } = require('@google-cloud/bigquery');
 const { google } = require('googleapis');
 const tagmanager = google.tagmanager('v2');
 
+const { getAuthClient } = require('./helpers/auth');
 
 // @see https://www.npmjs.com/package/p-ratelimit
 const { pRateLimit } = require('p-ratelimit');
@@ -20,25 +21,20 @@ const limit = pRateLimit({
 
 async function main() {
 
-  const MOCK_DATA = true; // change to false to use live API calls
+  const MOCK_DATA = process.env.USE_MOCK_DATA;
 
-  // auth constructor
-  const auth = new google.auth.GoogleAuth({
-    scopes: ['https://www.googleapis.com/auth/tagmanager.readonly'],
-    keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS
-  });
-
-  // create auth client
-  const authClient = await auth.getClient();
+  const auth = await getAuthClient();
 
   google.options({
     // All requests made with this object will use these settings unless overridden.
-    auth: authClient,
+    auth,
     timeout: 4000
   });
 
   const bqClient = new BigQuery();
-  const dataset = bqClient.dataset('test_gtm_upload');
+  const dataset = await bqClient.createDataset('gtm_database', {
+    location: 'US'
+  });
 
 
   /**
@@ -57,7 +53,7 @@ async function main() {
   const versions = MOCK_DATA ? require('./data/versions.json') : getVersions(containers);
 
   /**
-   * 4. For each live container version, insert the following into respective BQ tables:
+   * 4. For each live container version, get each of the following:
    * - Its tags
    * - Its variables
    * - Its builtInVariables
@@ -69,8 +65,24 @@ async function main() {
   const builtInVariables = versions.map(version => version.builtInVariable).filter(o => o).flat(2);
   const triggers = versions.map(version => version.trigger).filter(o => o).flat();
 
+  /**
+   * 5. Do any necessary prep to insert the responses from the GTM API for insertion into BQ tables
+   */
 
-  //TODO: explain what's happening here
+  const accountRecords = accounts;
+
+  const containerRecords = containers;
+
+  /**
+   * Tag records require a little extra prep work. We start by flattening the tag array,
+   * and then mapping its properties so that we can choose which properties from the
+   * response we will end up inserting into BigQuery. The mapping function involves
+   * destructuring individual tag objects to get the properties we want, and setting
+   * default values for any properties required by the BigQuery schema but which some
+   * tags will not have.
+   * 
+   * We will employ this same technique for variables and triggers as well.
+   */
   const tagRecords = tags.flatMap(tag => {
     let {
       accountId,
@@ -244,10 +256,10 @@ async function main() {
    */
 
   // Insert account rows
-  // await dataset.table('test_gtm_accounts').insert(accountRecords);
+  await dataset.table('test_gtm_accounts').insert(accountRecords);
 
   // Insert container rows
-  // await dataset.table('test_gtm_containers').insert(containerRecords);
+  await dataset.table('test_gtm_containers').insert(containerRecords);
 
   // Insert tag rows
   await dataset.table('test_gtm_tags').insert(tagRecords);
