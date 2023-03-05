@@ -106,13 +106,13 @@ create_cloud_function () {
 cloud_function_setup () {
 	read -p "Please enter your desired Function name. The recommended
 function name is 'gtm_downloader': " function_name
-  cd gtm_downloader_function
+  cd functions/gtm-downloader
   echo "~~~~~~~~ Creating Function ~~~~~~~~~~"
 	if create_cloud_function; then
-	  cd ..
+	  cd ../..
 	  echo "Function created."
   else
-    cd ..
+    cd ../..
     read -p  "Function creation failed. Try again? y/n: " exit_response
     if [ $exit_response = "n" ]; then
       exit_setup
