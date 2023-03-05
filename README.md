@@ -1,45 +1,36 @@
 # Google Tag Manager Downloader
 
-Created and maintained by @tyssejc (charlie.tysse@searchdiscovery.com)
+Created and maintained by [tyssejc](https://github.com/tyssejc) (charlie.tysse at searchdiscovery dot com).
 
-The goal of this project is to allow a client to be able to create a Looker Studio dashboard that gives him a "panopticon" view of all the hundreds of GTM containers he manages.
+The goal of this project is to allow you to have a Looker Studio dashboard that provides a "panopticon" view of all the GTM containers you manage.
 
-## Approach
-Will be very similar to the [google/analytics-settings-database](https://github.com/google/analytics-settings-database) utility, only for GTM instead of GA.
+## Kudos
+This project was heavily inspired by [b-kuehn](https://github.com/b-kuehn)'s excellent [google/analytics-settings-database](https://github.com/google/analytics-settings-database) utility. 
 
-## Todo
+## Requirements
+- [Google Cloud Platform (GCP) project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) with [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project#enable-billing) - Create or use an existing project as needed.
+  -  Note: This solution uses billable GCP resources.
+- [Google Tag Manager](https://tagmanager.google.com/)
 
-Here's where I'm keeping track of things that need to be done, as the project matures I'd like to switch to Issues.
+## Implementation
+1. Navigate to your Google Cloud project and open Cloud Shell
+2. Enter the following into Cloud Shell:
+  ```bash
+  rm -rf analytics-settings-database && git clone https://github.com/google/analytics-settings-database.git && cd analytics-settings-database && bash deploy.sh
+  ```
+3. Enter the information when prompted during the deployment process.
+  a. When asked if unauthenticated invocations should be allowed for the Cloud Function, answer **no**.
+4. When finished, add the service account email generated during the deployment process to your Google Tag Manager accounts.
 
-- [x] Create a repo
-- [x] Create a Service Account
-- [x] Figure out how to authenticate a Cloud Function with the GTM nodejs client (surprise, there's no python client for the GTM API)
-- [ ] Create a BigQuery dataset
-- [ ] Design schemas for each table in the BQ dataset
-- [ ] Extend the Cloud Function to:
-  - [ ] only allow certain GTM accounts to be accessed
-  - [ ] for all available GTM accounts, fetch a list of all containers and their metadata and send to BQ table(s)
-  - for all available containers
-    - [ ] fetch all tags and their metadata and send to BQ table(s)
-    - [ ] fetch all tags and their metadata and send to BQ table(s)
-    - [ ] fetch all tags and their metadata and send to BQ table(s)
-- [ ] Create a Cloud Bucket
-- [ ] Create a Cloud Scheduler job to run every night
-- [ ] Create a shell script to be run in Cloud Console that will automate this process
-
-
-## Local development
-
-Before running `npm install`, make sure you have:
-
-- a Google Cloud Platform service account client key (not included, please hmu for it)
-- node lts/gallium (^16.18.0)
-- the `gcloud` SDK (for deploying Cloud Functions)
-
-Optional:
-
-- Docker (only if you want to build locally &mdash; Google [doesn't recommend this anymore](https://cloud.google.com/functions/docs/running/overview#choosing_an_abstraction_layer))
-
-## Deployment
-
-Once you're done testing locally, you can [deploy to your GCP project](https://cloud.google.com/functions/docs/deploy) using gcloud.
+This will create the following:
+- A Cloud Function (2nd gen)
+- A Cloud Scheduler Job
+- A BigQuery dataset with the name "gtm_database"
+- The following tables:
+  - gtm_accounts
+  - gtm_containers
+  - gtm_tags
+  - gtm_variables
+  - gtm_built_in_variables
+  - gtm_triggers
+- A service account with the Editor role
