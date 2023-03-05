@@ -16,7 +16,7 @@ This project was heavily inspired by [b-kuehn](https://github.com/b-kuehn)'s exc
 1. Navigate to your Google Cloud project and open Cloud Shell
 2. Enter the following into Cloud Shell:
   ```bash
-  rm -rf gtm-database && git clone https://github.com/tyssejc/gtm-database.git && cd gtm-database && bash deploy.sh
+  rm -rf gtm-database && git clone https://github.com/searchdiscovery/gtm-database.git && cd gtm-database && bash deploy.sh
   ```
 3. Enter the information when prompted during the deployment process.
   a. When asked if unauthenticated invocations should be allowed for the Cloud Function, answer **no**.
