@@ -94,7 +94,7 @@ service_account_setup
 create_cloud_function () {
   gcloud functions deploy $function_name \
   	--project=$project_id \
-  	--runtime=node16 \
+  	--runtime=nodejs16 \
   	--service-account=$service_account_email \
   	--memory=1GB \
   	--timeout=4000s \
