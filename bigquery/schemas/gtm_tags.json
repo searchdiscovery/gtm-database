@@ -58,6 +58,12 @@
         "type": "RECORD",
         "fields": [
           {
+            "name": "type",
+            "mode": "NULLABLE",
+            "type": "STRING",
+            "fields": []
+          },
+          {
             "name": "map",
             "mode": "REPEATED",
             "type": "RECORD",
@@ -79,14 +85,27 @@
                 "mode": "NULLABLE",
                 "type": "STRING",
                 "fields": []
+              },
+              {
+                "name": "list",
+                "mode": "REPEATED",
+                "type": "RECORD",
+                "fields": [
+                  {
+                    "name": "type",
+                    "mode": "NULLABLE",
+                    "type": "STRING",
+                    "fields": []
+                  },
+                  {
+                    "name": "value",
+                    "mode": "NULLABLE",
+                    "type": "STRING",
+                    "fields": []
+                  }
+                ]
               }
             ]
-          },
-          {
-            "name": "type",
-            "mode": "NULLABLE",
-            "type": "STRING",
-            "fields": []
           }
         ]
       },
