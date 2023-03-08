@@ -31,7 +31,7 @@ async function main() {
   });
 
   const bqClient = new BigQuery();
-  const dataset = await bqClient.dataset('test_gtm_upload');
+  const dataset = await bqClient.dataset('gtm_database');
 
   /**
    * 1. Get all accounts
@@ -252,22 +252,22 @@ async function main() {
    */
 
   // Insert account rows
-  await dataset.table('test_gtm_accounts').insert(accountRecords);
+  await dataset.table('gtm_accounts').insert(accountRecords);
 
   // Insert container rows
-  await dataset.table('test_gtm_containers').insert(containerRecords);
+  await dataset.table('gtm_containers').insert(containerRecords);
 
   // Insert tag rows
-  await dataset.table('test_gtm_tags').insert(tagRecords);
+  await dataset.table('gtm_tags').insert(tagRecords);
 
   // Insert variable rows
-  await dataset.table('test_gtm_variables').insert(variableRecords);
+  await dataset.table('gtm_variables').insert(variableRecords);
 
   // BQ request to insert built-in variables
-  await dataset.table('test_gtm_built_in_variables').insert(builtInVariableRecords);
+  await dataset.table('gtm_built_in_variables').insert(builtInVariableRecords);
 
   // BQ request to insert triggers
-  await dataset.table('test_gtm_triggers').insert(triggerRecords);
+  await dataset.table('gtm_triggers').insert(triggerRecords);
   
   return `Tag manager db go brrrrr`;
 
@@ -292,7 +292,7 @@ functions.http('gtmDownloader', async (req, res) => {
 const getAccounts = async () => {
 
   const accountsList = await tagmanager.accounts.list();
-  
+
   return accountsList.data.account;
 
 }
