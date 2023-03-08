@@ -14,8 +14,9 @@ const { getAuthClient } = require('./helpers/auth');
 const { pRateLimit } = require('p-ratelimit');
 
 const limit = pRateLimit({
-  interval: 1000,
-  rate: .25
+  interval: 4000,
+  rate: 1,
+  concurrency: 1
 });
 
 
@@ -291,6 +292,7 @@ functions.http('gtmDownloader', async (req, res) => {
 const getAccounts = async () => {
 
   const accountsList = await tagmanager.accounts.list();
+  
   return accountsList.data.account;
 
 }
@@ -321,8 +323,6 @@ const getVersions = async (containers) => {
   });
   
   const versionsList = await Promise.all(versionRequests);
-
-  console.log("versionsList: ", versionsList);
 
   return versionsList.flatMap(c => c.data); // <== USE THIS
   
