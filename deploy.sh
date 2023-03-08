@@ -68,7 +68,7 @@ service_account_setup () {
   read -p "Please enter you desired service account name with no spaces.
 This service account will be used by your Cloud Function.
 The recommended name is 'gtm-database' : " service_account_name
-  service_account_name=${service-account-name:-gtm-database}
+  service_account_name=${service_account_name:-gtm-database}
   echo "~~~~~~~~ Creating Service Account ~~~~~~~~~~"
   if create_service_account; then
     service_account_email="$service_account_name@$project_id.iam.gserviceaccount.com"
