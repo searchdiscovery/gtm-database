@@ -44,7 +44,7 @@ create_service_account () {
   gcloud iam service-accounts create $service_account_name \
     --display-name=$service_account_name
   gcloud iam service-accounts keys create ./functions/gtm-downloader/key.json \
-    --iam-account=$service_account_name
+    --iam-account=$service_account_email
 }
 
 set_service_account_email () {
