@@ -103,7 +103,7 @@ create_cloud_function () {
   	--runtime=nodejs16 \
   	--service-account=$service_account_email \
   	--memory=1GB \
-  	--timeout=4000s \
+  	--timeout=3600s \
   	--trigger-http \
   	--entry-point=gtmDownloader \
 		--gen2
