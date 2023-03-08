@@ -159,7 +159,7 @@ echo "BigQuery tables created."
 create_cloud_scheduler () {
   gcloud scheduler jobs create http $scheduler_name \
   	--schedule "0 23 * * *" \
-    --attempt
+    --attempt-deadline=30m \
     --uri="$function_uri" \
   	--http-method=GET \
   	--oidc-service-account-email=$service_account_email \
