@@ -1,9 +1,12 @@
 {
+  "name": "gtm-downloader",
+  "version": "0.1.0",
+  "author": {
+    "name": "Charlie Tysse",
+    "email": "charlie.tysse@searchdiscovery.com"
+  },
   "scripts": {
-    "test": "index.js",
-    "start": "functions-framework --target=gtmDownloader --signature-type=http",
-    "build": "./pack.sh",
-    "deploy": "./deploy.sh"
+    "serve": "functions-framework --target=gtmDownloader --signature-type=http"
   },
   "dependencies": {
     "@google-cloud/bigquery": "^6.1.0",
@@ -11,5 +14,8 @@
     "dotenv": "^16.0.3",
     "googleapis": "^108.0.0",
     "p-ratelimit": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
