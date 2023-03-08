@@ -169,6 +169,7 @@ create_cloud_scheduler () {
 cloud_scheduler_setup () {
 	read -p "Please enter your desired Cloud Scheduler name.
 The recommended scheduler name is 'gtm_downloader': " scheduler_name
+  scheduler_name=${scheduler_name:-gtm_downloader}
   echo "A cloud scheduler will now be created that runs daily at 11 PM."
 	echo "~~~~~~~~ Creating Cloud Scheduler ~~~~~~~~~~"
 	function_uri=$(gcloud functions describe $function_name --format="value(serviceConfig.uri)")
