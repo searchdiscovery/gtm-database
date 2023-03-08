@@ -1,4 +1,2 @@
 node_modules
-jwt.keys.json
-data/
-test.js
+key.json
