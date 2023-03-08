@@ -43,8 +43,6 @@ exit_setup () {
 create_service_account () {
   gcloud iam service-accounts create $service_account_name \
     --display-name=$service_account_name
-  gcloud iam service-accounts keys create ./functions/gtm-downloader/key.json \
-    --iam-account=$service_account_email
 }
 
 set_service_account_email () {
@@ -56,6 +54,11 @@ set_service_account_email () {
   else
     echo $service_account_email
   fi
+}
+
+create_service_account_key () {
+  gcloud iam service-accounts keys create ./functions/gtm-downloader/key.json \
+    --iam-account=$service_account_email
 }
 
 set_service_account_iam_policy () {
@@ -72,7 +75,7 @@ The recommended name is 'gtm-database' : " service_account_name
   echo "~~~~~~~~ Creating Service Account ~~~~~~~~~~"
   if create_service_account; then
     service_account_email="$service_account_name@$project_id.iam.gserviceaccount.com"
-    if set_service_account_iam_policy; then
+    if create_service_account_key && set_service_account_iam_policy; then
       echo "Service account created."
     else
       read -p  "Service account creation failed. Try again? y/n: " exit_response
