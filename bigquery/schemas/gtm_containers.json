@@ -28,6 +28,13 @@
     "fields": []
   },
   {
+    "name": "domainName",
+    "mode": "REPEATED",
+    "type": "STRING",
+    "description": null,
+    "fields": []
+  },
+  {
     "name": "publicId",
     "mode": "NULLABLE",
     "type": "STRING",
