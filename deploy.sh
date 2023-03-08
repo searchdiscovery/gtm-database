@@ -180,7 +180,7 @@ The recommended scheduler name is 'gtm_downloader': " scheduler_name
 	if create_cloud_scheduler; then
     echo "Cloud scheduler created."
   else
-    cd ..
+    cd ../..
     read -p  "Schedule job creation failed. Try again? y/n: " exit_response
     if [ $exit_response = "n" ]; then
       exit_setup
