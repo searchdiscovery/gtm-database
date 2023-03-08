@@ -21,8 +21,6 @@ const limit = pRateLimit({
 
 async function main() {
 
-  const MOCK_DATA = process.env.USE_MOCK_DATA;
-
   const auth = await getAuthClient();
 
   google.options({
@@ -47,7 +45,7 @@ async function main() {
   /**
    * 3. Get the live versions of each container
    */
-  const versions = MOCK_DATA ? require('./data/versions.json') : await getVersions(containers);
+  const versions = await getVersions(containers);
 
   /**
    * 4. For each live container version, get each of the following:
