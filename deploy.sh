@@ -171,7 +171,7 @@ cloud_scheduler_setup () {
 The recommended scheduler name is 'gtm_downloader': " scheduler_name
   echo "A cloud scheduler will now be created that runs daily at 11 PM."
 	echo "~~~~~~~~ Creating Cloud Scheduler ~~~~~~~~~~"
-	function_uri=$(gcloud functions describe $function_name --format="value(httpsTrigger.url)")
+	function_uri=$(gcloud functions describe $function_name --format="value(serviceConfig.uri)")
 	echo $function_uri
   if gcloud app browse; then
     gcloud app create
