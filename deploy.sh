@@ -43,6 +43,8 @@ exit_setup () {
 create_service_account () {
   gcloud iam service-accounts create $service_account_name \
     --display-name=$service_account_name
+  gcloud iam service-accounts keys create ./functions/gtm-downloader/key.json \
+    --iam-account=$service_account_name
 }
 
 set_service_account_email () {
@@ -66,6 +68,7 @@ service_account_setup () {
   read -p "Please enter you desired service account name with no spaces.
 This service account will be used by your Cloud Function.
 The recommended name is 'gtm-database' : " service_account_name
+  service_account_name=${service-account-name:-gtm-database}
   echo "~~~~~~~~ Creating Service Account ~~~~~~~~~~"
   if create_service_account; then
     service_account_email="$service_account_name@$project_id.iam.gserviceaccount.com"
@@ -106,6 +109,7 @@ create_cloud_function () {
 cloud_function_setup () {
 	read -p "Please enter your desired Function name. The recommended
 function name is 'gtm_downloader': " function_name
+  function_name=${function_name:-gtm_downloader}
   cd functions/gtm-downloader
   echo "~~~~~~~~ Creating Function ~~~~~~~~~~"
 	if create_cloud_function; then
