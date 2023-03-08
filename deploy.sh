@@ -137,7 +137,7 @@ echo "~~~~~~~~ Creating BigQuery Tables ~~~~~~~~~~"
 cd bigquery/schemas
 bq mk -t --time_partitioning_type=DAY \
 	--schema=./gtm_accounts.json \
-	$project_id:gtm_database.gtm_account_summaries
+	$project_id:gtm_database.gtm_accounts
 bq mk -t --time_partitioning_type=DAY \
 	--schema=./gtm_containers.json \
 	$project_id:gtm_database.gtm_containers
@@ -159,6 +159,7 @@ echo "BigQuery tables created."
 create_cloud_scheduler () {
   gcloud scheduler jobs create http $scheduler_name \
   	--schedule "0 23 * * *" \
+    --attempt
     --uri="$function_uri" \
   	--http-method=GET \
   	--oidc-service-account-email=$service_account_email \
