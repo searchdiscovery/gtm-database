@@ -66,7 +66,6 @@ async function main() {
    */
 
   const accountRecords = accounts;
-
   const containerRecords = containers;
 
   /**
@@ -243,87 +242,67 @@ async function main() {
         ]
       }];
     }
-    
     return { accountId, containerId, triggerId, name, type, filter, customEventFilter, waitForTags, checkValidation, waitForTagsTimeout, uniqueTriggerId, fingerprint, parentFolderId, parameter }
   });
 
   /**
    * Sends rows to BigQuery
    */
-
   // Insert account rows
-  await dataset.table('gtm_accounts').insert(accountRecords);
-
+  await dataset.table('gtm_accounts').insert(accountRecords, { ignoreUnknownValues:true });
   // Insert container rows
-  await dataset.table('gtm_containers').insert(containerRecords);
-
+  await dataset.table('gtm_containers').insert(containerRecords, { ignoreUnknownValues:true });
   // Insert tag rows
-  await dataset.table('gtm_tags').insert(tagRecords);
-
+  await dataset.table('gtm_tags').insert(tagRecords, { ignoreUnknownValues:true });
   // Insert variable rows
-  await dataset.table('gtm_variables').insert(variableRecords);
-
+  await dataset.table('gtm_variables').insert(variableRecords, { ignoreUnknownValues:true });
   // BQ request to insert built-in variables
-  await dataset.table('gtm_built_in_variables').insert(builtInVariableRecords);
-
+  await dataset.table('gtm_built_in_variables').insert(builtInVariableRecords, { ignoreUnknownValues:true });
   // BQ request to insert triggers
-  await dataset.table('gtm_triggers').insert(triggerRecords);
-  
+  await dataset.table('gtm_triggers').insert(triggerRecords, { ignoreUnknownValues:true });
   return `Tag manager db go brrrrr`;
-
 }
 
 // do the cloud function!
 functions.http('gtmDownloader', async (req, res) => {
-
   try {
     // run main
     const data = await main();
-
     res.status(200).send(data);
-
   } catch(e) {
     console.error('Something went wrong:',e);
     res.status(500).send(e);
   }
-  
 });
 
 const getAccounts = async () => {
-
   const accountsList = await tagmanager.accounts.list();
-
   return accountsList.data.account;
 
 }
 
 const getContainers = async (accounts) => {
-
   const containerRequests = [];
-
   accounts.forEach(account => {
     containerRequests.push(
       limit(() => tagmanager.accounts.containers.list({ parent: account.path }))
     );
   });
-  
   const containersList = await Promise.all(containerRequests);
-
-  return containersList.flatMap(c => c.data.container);
+  containers = containersList.flatMap(c => c.data.container);
+  console.log(`Number of containers pulled: ${containers.length}`);
+  return containers;
 }
 
 const getVersions = async (containers) => {
-
   const versionRequests = [];
-
   containers.forEach(container => {
     versionRequests.push(
       limit(() => tagmanager.accounts.containers.versions.live({ parent: container.path }))
     );
   });
-  
   const versionsList = await Promise.all(versionRequests);
-
   return versionsList.flatMap(c => c.data); // <== USE THIS
-  
+  console.log(`Number of versionsList pulled: ${versionsList.length}`);
+  return versionsList;
 }
