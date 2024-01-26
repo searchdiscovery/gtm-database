@@ -289,7 +289,7 @@ const getContainers = async (accounts) => {
     );
   });
   const containersList = await Promise.all(containerRequests);
-  containers = containersList.flatMap(c => c.data.container);
+  const containers = containersList.flatMap(c => c.data.container);
   console.log(`Number of containers pulled: ${containers.length}`);
   return containers;
 }
